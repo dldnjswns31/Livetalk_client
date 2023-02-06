@@ -1,11 +1,13 @@
 import { authInstance } from "./instance";
 
+const auth = authInstance();
+
 const authAPI = {
   signup: (data: any) => {
-    return authInstance().post("/signup", data);
+    return auth.post("/signup", data);
   },
   signin: (data: any) => {
-    return authInstance().post("/signin", data);
+    return auth.post("/signin", data);
   },
 };
 

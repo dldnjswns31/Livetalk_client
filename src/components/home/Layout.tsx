@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AxiosError } from "axios";
 import styled from "styled-components";
+
 import authAPI from "../../api/auth";
 import { ISigninForm } from "../../types/signin";
+import { saveToken } from "../../utils/token";
 
 const StPageContainer = styled.div`
   display: inline-flex;
@@ -92,19 +95,22 @@ const StError = styled.span`
 `;
 
 const Layout = () => {
-  const [error, setError] = useState("");
+  const [error, setError] = useState<undefined | string>();
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors, isDirty, isValid },
   } = useForm<ISigninForm>({ mode: "onChange" });
 
-  const onSubmit = async (data: ISigninForm) => {
+  const onSubmit = async (form: ISigninForm) => {
     try {
-      const response = await authAPI.signin(data);
-      console.log(response);
+      const { data } = await authAPI.signin(form);
+      saveToken(data.token);
+      navigate("/chat");
     } catch (err) {
-      setError(err.response.data);
+      const error = err as AxiosError<string>;
+      setError(error.response?.data);
     }
   };
   return (
