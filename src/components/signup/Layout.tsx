@@ -69,15 +69,15 @@ const StButtonContainer = styled.div`
   width: 100%;
 `;
 
-const StSubmitButton = styled.button<{ isActive: boolean }>`
+const StSubmitButton = styled.button<{ disabled: boolean }>`
   width: 100%;
   height: 2.5rem;
   border: none;
   border-radius: 0.5rem;
-  background-color: ${({ isActive, theme }) =>
-    isActive ? theme.colors.yellow : theme.colors.gray_2};
-  color: ${({ isActive, theme }) =>
-    isActive ? theme.colors.black : theme.colors.white};
+  background-color: ${({ disabled, theme }) =>
+    disabled ? theme.colors.gray_2 : theme.colors.yellow};
+  color: ${({ disabled, theme }) =>
+    disabled ? theme.colors.white : theme.colors.black};
   font-size: 1.2rem;
 `;
 
@@ -89,7 +89,7 @@ const Layout = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isDirty, isValid },
   } = useForm<ISignupForm>();
   const navigate = useNavigate();
 
@@ -157,9 +157,7 @@ const Layout = () => {
               <span>{errors?.password?.message}</span>
             </StInputContaienr>
             <StButtonContainer>
-              <StSubmitButton
-                isActive={Object.keys(errors).length ? false : true}
-              >
+              <StSubmitButton disabled={!isDirty || !isValid}>
                 회원가입
               </StSubmitButton>
             </StButtonContainer>
