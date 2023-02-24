@@ -9,6 +9,9 @@ const authAPI = {
   signin: (data: any) => {
     return auth.post("/signin", data);
   },
+  verify: () => {
+    return auth("/verify");
+  },
 };
 
 export default authAPI;

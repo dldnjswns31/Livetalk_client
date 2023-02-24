@@ -7,6 +7,9 @@ import styled from "styled-components";
 import authAPI from "../../api/auth";
 import { ISigninForm } from "../../types/signin";
 import { saveToken } from "../../utils/token";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { saveUserData } from "../../redux/slice/userSlice";
+import withAuth from "../HOC/withAuth";
 
 const StPageContainer = styled.div`
   display: inline-flex;
@@ -96,6 +99,8 @@ const StError = styled.span`
 
 const Layout = () => {
   const [error, setError] = useState<undefined | string>();
+  const dispatch = useAppDispatch();
+  const user = useAppSelector((state) => state.user);
   const navigate = useNavigate();
   const {
     register,
@@ -105,14 +110,16 @@ const Layout = () => {
 
   const onSubmit = async (form: ISigninForm) => {
     try {
-      const { data } = await authAPI.signin(form);
-      saveToken(data.token);
-      navigate("/chat");
+      const res = await authAPI.signin(form);
+      saveToken(res.headers.authorization);
+      dispatch(saveUserData(res.data.data));
+      // navigate("/chat");
     } catch (err) {
       const error = err as AxiosError<string>;
       setError(error.response?.data);
     }
   };
+
   return (
     <StPageContainer>
       <StSignupContainer>
@@ -159,4 +166,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default withAuth(Layout, false);

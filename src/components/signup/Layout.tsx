@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import authAPI from "../../api/auth";
 import { ISignupForm } from "../../types/signup";
+import withAuth from "../HOC/withAuth";
 
 const StPageContainer = styled.div`
   display: inline-flex;
@@ -176,4 +177,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default withAuth(Layout, false);
