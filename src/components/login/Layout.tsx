@@ -113,7 +113,7 @@ const Layout = () => {
       const res = await authAPI.signin(form);
       saveToken(res.headers.authorization);
       dispatch(saveUserData(res.data.data));
-      // navigate("/chat");
+      navigate("/");
     } catch (err) {
       const error = err as AxiosError<string>;
       setError(error.response?.data);

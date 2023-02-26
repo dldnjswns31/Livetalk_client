@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import styled, { css } from "styled-components";
 import useSocket from "../../hooks/useSocket";
 import reactIcon from "../../assets/react.svg";
+import withAuth from "../HOC/withAuth";
+import { useAppSelector } from "../../hooks";
 
 const StPageContainer = styled.div`
   display: inline-flex;
@@ -79,8 +81,6 @@ const StLeftLowerBar = styled.div`
   justify-content: center;
   align-items: center;
   height: 10%;
-  /* background-color: ${({ theme }) => theme.colors.brown}; */
-  /* color: ${({ theme }) => theme.colors.white}; */
 `;
 
 const StUserOrChatroomButton = styled.button<{ selected: boolean }>`
@@ -107,16 +107,20 @@ const StChatRightContainer = styled.div`
 `;
 
 const Layout = () => {
-  const [users, setUsers] = useState<{ userID: string }[]>([]);
+  const [users, setUsers] = useState<{ uid: string; nickname: string }[]>([]);
   const [myId, setMyId] = useState<null | string>();
   const socket = useSocket("http://localhost:8080");
+  const userData = useAppSelector((state) => state.user);
 
   useEffect(() => {
     if (socket) {
-      setMyId(socket.id);
-      socket.on("users", (data: any) => {
-        const filterUser = data.filter((user) => user.userID !== socket.id);
-        setUsers([{ userID: myId }, ...filterUser]);
+      setMyId(userData.uid);
+      socket.on("users", (data: { uid: string; nickname: string }[]) => {
+        const filterUser = data.filter((user) => user.uid !== userData.uid);
+        setUsers([
+          { uid: userData.uid, nickname: userData.nickname },
+          ...filterUser,
+        ]);
       });
 
       return () => {
@@ -141,7 +145,7 @@ const Layout = () => {
                         <img src={reactIcon} alt="userImage" />
                       </StUserImage>
                       <StUserName>
-                        <span>{myId === item.userID ? "나" : item.userID}</span>
+                        <span>{myId === item.uid ? `나` : item.nickname}</span>
                       </StUserName>
                     </StUser>
                   );
@@ -163,4 +167,4 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default withAuth(Layout, true);
