@@ -2,8 +2,9 @@ import { useEffect } from "react";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "styled-components";
 import authAPI from "./api/auth";
+import SocketContextProvider from "./context/SocketContext";
 import { useAppDispatch } from "./hooks";
-import { IUser, saveUserData } from "./redux/slice/userSlice";
+import { saveUserData } from "./redux/slice/userSlice";
 import Router from "./Router";
 import GlobalStyles from "./styles/GlobalStyles";
 import theme from "./styles/theme";
@@ -27,8 +28,10 @@ function App() {
   return (
     <BrowserRouter>
       <ThemeProvider theme={theme}>
-        <GlobalStyles />
-        <Router />
+        <SocketContextProvider>
+          <GlobalStyles />
+          <Router />
+        </SocketContextProvider>
       </ThemeProvider>
     </BrowserRouter>
   );
