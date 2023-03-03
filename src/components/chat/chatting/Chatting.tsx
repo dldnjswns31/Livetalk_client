@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import { SocketContext } from "../../../context/SocketContext";
@@ -78,25 +78,29 @@ const StMessage = styled.span<{ myself: boolean }>`
 `;
 
 const Chatting = () => {
+  const [messages, setMessages] = useState<
+    { from: string; to: string; message: string }[] | null
+  >(null);
+
   const { register, handleSubmit, reset } = useForm<{ message: string }>();
-  const socketContext = useContext(SocketContext);
+  const socket = useContext(SocketContext);
   const loginUserData = useAppSelector((state) => state.user);
   const selectedUser = useAppSelector((state) => state.selectedUser);
   const currentUserList = useAppSelector((state) => state.userList);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    const socket = socketContext?.socket;
     if (socket) {
       //   개인메세지 수신했을 때
       socket.on("private message", (data) => {
         console.log("귓속말!", data);
+        console.log(currentUserList);
       });
       return () => {
         socket.disconnect();
       };
     }
-  }, [socketContext]);
+  }, [socket]);
 
   // 개인메세지 송신
   const onChattingSubmit = (form: { message: string }) => {
@@ -110,7 +114,6 @@ const Chatting = () => {
       message: form.message,
     };
 
-    const socket = socketContext?.socket;
     if (socket) {
       let newCurrentUserList = JSON.parse(JSON.stringify(currentUserList));
       newCurrentUserList = newCurrentUserList.map((item) => {

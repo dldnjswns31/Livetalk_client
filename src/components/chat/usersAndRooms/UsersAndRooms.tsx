@@ -23,33 +23,6 @@ const StUserListContainer = styled.div`
   overflow-y: scroll;
 `;
 
-const StUser = styled.div`
-  display: inline-flex;
-  width: 100%;
-  height: 4rem;
-`;
-
-const StUserImage = styled.div`
-  flex: 1 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  img {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    background-color: ${({ theme }) => theme.colors.white};
-  }
-`;
-
-const StUserName = styled.div`
-  flex: 5 0;
-  display: flex;
-  align-items: center;
-  padding: 0 0.5rem;
-`;
-
 const StLeftLowerBar = styled.div`
   display: flex;
   justify-content: center;
@@ -82,10 +55,9 @@ const UsersAndRooms = () => {
   const loginUserData = useAppSelector((state) => state.user);
   const currentUserList = useAppSelector((state) => state.userList);
   const dispatch = useAppDispatch();
-  const socketContext = useContext(SocketContext);
+  const socket = useContext(SocketContext);
 
   useEffect(() => {
-    const socket = socketContext?.socket;
     if (socket) {
       if (!socket) throw Error("socket 연결이 없습니다.");
       socket.on(
@@ -113,7 +85,7 @@ const UsersAndRooms = () => {
         }
       );
     }
-  }, [socketContext]);
+  }, [socket]);
 
   // 유저 / 채팅방 탭 클릭했을 시
   const hadnelTabClick = (e: React.MouseEvent<HTMLDivElement>) => {

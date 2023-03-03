@@ -46,16 +46,21 @@ const StChatRightContainer = styled.div`
 `;
 
 const Layout = () => {
-  const socketConnect = useSocket("http://localhost:8080");
-  const socketContext = useContext(SocketContext);
   const selectedUser = useAppSelector((state) => state.selectedUser);
 
-  // socket 연결 후 context에 저장
-  useEffect(() => {
-    if (socketConnect && socketContext) {
-      socketContext.setSocket(socketConnect);
-    }
-  }, [socketConnect]);
+  // socket event
+  // useEffect(() => {
+  //   const socket = socketContext?.socket;
+  //   if (socket) {
+  //     //   개인메세지 수신했을 때
+  //     socket.on("private message", (data) => {
+  //       console.log("귓속말!", data);
+  //     });
+  //     return () => {
+  //       socket.disconnect();
+  //     };
+  //   }
+  // }, [socketContext]);
 
   return (
     <>
