@@ -8,4 +8,9 @@ const authInstance = (): AxiosInstance => {
   return setInterceptors(instance);
 };
 
-export { authInstance };
+const conversationInstance = (): AxiosInstance => {
+  const instance = axios.create({ baseURL: `${BASE_URL}/chat` });
+  return setInterceptors(instance);
+};
+
+export { authInstance, conversationInstance };

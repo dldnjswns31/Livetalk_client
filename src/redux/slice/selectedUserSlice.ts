@@ -3,7 +3,6 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 interface IUser {
   uid: string;
   nickname: string;
-  messages: any[];
 }
 
 export const selectedUserSlice = createSlice({

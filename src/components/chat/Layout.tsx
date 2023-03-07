@@ -1,10 +1,8 @@
-import { useContext, useEffect } from "react";
 import styled from "styled-components";
-import useSocket from "../../hooks/useSocket";
+
 import withAuth from "../HOC/withAuth";
 import { useAppSelector } from "../../hooks";
-import { SocketContext } from "../../context/SocketContext";
-import UsersAndRooms from "./usersAndRooms/UsersAndRooms";
+import Lobby from "./lobby/Lobby";
 import Chatting from "./chatting/Chatting";
 
 const StPageContainer = styled.div`
@@ -48,26 +46,12 @@ const StChatRightContainer = styled.div`
 const Layout = () => {
   const selectedUser = useAppSelector((state) => state.selectedUser);
 
-  // socket event
-  // useEffect(() => {
-  //   const socket = socketContext?.socket;
-  //   if (socket) {
-  //     //   개인메세지 수신했을 때
-  //     socket.on("private message", (data) => {
-  //       console.log("귓속말!", data);
-  //     });
-  //     return () => {
-  //       socket.disconnect();
-  //     };
-  //   }
-  // }, [socketContext]);
-
   return (
     <>
       <StPageContainer>
         <StChatContainer>
           <StChatLeftContainer>
-            <UsersAndRooms />
+            <Lobby />
           </StChatLeftContainer>
           <StChatRightContainer>
             {Object.keys(selectedUser).length ? (

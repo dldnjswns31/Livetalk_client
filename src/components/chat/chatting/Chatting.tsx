@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
+import conversationAPI from "../../../api/conversations";
+
 import { SocketContext } from "../../../context/SocketContext";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
 import { saveCurrentUserList } from "../../../redux/slice/userListSlice";
@@ -87,47 +89,35 @@ const Chatting = () => {
   const loginUserData = useAppSelector((state) => state.user);
   const selectedUser = useAppSelector((state) => state.selectedUser);
   const currentUserList = useAppSelector((state) => state.userList);
-  const dispatch = useAppDispatch();
 
+  // 개인메세지 수신했을 때
   useEffect(() => {
     if (socket) {
-      //   개인메세지 수신했을 때
       socket.on("private message", (data) => {
         console.log("귓속말!", data);
         console.log(currentUserList);
       });
-      return () => {
-        socket.disconnect();
-      };
     }
   }, [socket]);
 
-  // 개인메세지 송신
-  const onChattingSubmit = (form: { message: string }) => {
-    if (!selectedUser) {
-      console.error("selectedUser 오류!");
-      return;
-    }
-    const messageObj = {
-      from: loginUserData.uid,
-      to: selectedUser.uid,
-      message: form.message,
-    };
-
+  // 현재 접속한 유저
+  useEffect(() => {
     if (socket) {
-      let newCurrentUserList = JSON.parse(JSON.stringify(currentUserList));
-      newCurrentUserList = newCurrentUserList.map((item) => {
-        if (item.uid === messageObj.to) {
-          item.messages.push(messageObj);
-        }
-        return item;
+      socket.emit("userlist");
+      socket.on("userlist", (data) => {
+        console.log(data);
       });
-      dispatch(saveCurrentUserList(newCurrentUserList));
-
-      socket.emit("private message", messageObj);
     }
-    reset();
-  };
+
+    return () => {
+      socket?.removeListener("userlist");
+    };
+  }, [selectedUser]);
+
+  useEffect(() => {
+    // 해당 유저와의 메세지 내역 http 요청
+    // 없다면 그냥 빈 배열을 setState
+  }, [selectedUser]);
   return (
     <>
       <StChattingTitle>
@@ -148,7 +138,7 @@ const Chatting = () => {
           ))}
       </StChattingContent>
       <StChattingFormContainer>
-        <StChattingForm onSubmit={handleSubmit(onChattingSubmit)}>
+        <StChattingForm onSubmit={(e) => e.preventDefault()}>
           <input type="text" {...register("message", { required: true })} />
           <div>
             <button>send</button>

@@ -5,7 +5,9 @@ import reactIcon from "../../../assets/react.svg";
 import { SocketContext } from "../../../context/SocketContext";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
 import { saveCurrentUserList } from "../../../redux/slice/userListSlice";
-import User from "./user/User";
+import Conversation from "./conversation/Conversation";
+import User from "./userList/user/User";
+import UserList from "./userList/UserList";
 
 const StLeftUpperBar = styled.div`
   display: flex;
@@ -44,50 +46,10 @@ const StUserOrChatroomButton = styled.button<{ selected: boolean }>`
   color: ${({ theme }) => theme.colors.black};
 `;
 
-const UsersAndRooms = () => {
+const Lobby = () => {
   const [selectedTab, setSelectedTab] = useState<"user" | "chatting">("user");
-  //   const [selectedUser, setSelectedUser] = useState<null | {
-  //     uid: string;
-  //     nickname: string;
-  //     messages: any[];
-  //   }>(null);
 
-  const loginUserData = useAppSelector((state) => state.user);
-  const currentUserList = useAppSelector((state) => state.userList);
-  const dispatch = useAppDispatch();
-  const socket = useContext(SocketContext);
-
-  useEffect(() => {
-    if (socket) {
-      if (!socket) throw Error("socket 연결이 없습니다.");
-      socket.on(
-        "users",
-        (
-          data: {
-            uid: string;
-            nickname: string;
-            messages: any[];
-          }[]
-        ) => {
-          const filterUser = data.filter(
-            (user) => user.uid !== loginUserData.uid
-          );
-          dispatch(
-            saveCurrentUserList([
-              {
-                uid: loginUserData.uid,
-                nickname: loginUserData.nickname,
-                messages: [],
-              },
-              ...filterUser,
-            ])
-          );
-        }
-      );
-    }
-  }, [socket]);
-
-  // 유저 / 채팅방 탭 클릭했을 시
+  // 로비 탭 클릭했을 시
   const hadnelTabClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!(e.target instanceof HTMLButtonElement)) return;
     const tabName = e.target.dataset.tab;
@@ -100,17 +62,10 @@ const UsersAndRooms = () => {
   return (
     <>
       <StLeftUpperBar>
-        <span>현재 접속중인 유저 {currentUserList.length}</span>
+        <span>현재 접속중인 유저</span>
       </StLeftUpperBar>
       <StUserListContainer>
-        {selectedTab === "user" ? (
-          currentUserList &&
-          currentUserList.map((userData, index) => {
-            return <User key={index} userData={userData} />;
-          })
-        ) : (
-          <span>hi</span>
-        )}
+        {selectedTab === "user" ? <UserList /> : <Conversation />}
       </StUserListContainer>
       <StLeftLowerBar onClick={hadnelTabClick}>
         <StUserOrChatroomButton
@@ -130,4 +85,4 @@ const UsersAndRooms = () => {
   );
 };
 
-export default UsersAndRooms;
+export default Lobby;
