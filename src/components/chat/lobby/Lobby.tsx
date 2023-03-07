@@ -1,12 +1,7 @@
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import styled, { css } from "styled-components";
 
-import reactIcon from "../../../assets/react.svg";
-import { SocketContext } from "../../../context/SocketContext";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
-import { saveCurrentUserList } from "../../../redux/slice/userListSlice";
-import Conversation from "./conversation/Conversation";
-import User from "./userList/user/User";
+import ConversationList from "./conversationList/ConversationList";
 import UserList from "./userList/UserList";
 
 const StLeftUpperBar = styled.div`
@@ -38,10 +33,13 @@ const StUserOrChatroomButton = styled.button<{ selected: boolean }>`
   background: none;
   border: none;
   ${({ selected }) =>
-    selected &&
-    css`
-      border-top: 3px solid ${({ theme }) => theme.colors.brown};
-    `}
+    selected
+      ? css`
+          border-top: 3px solid ${({ theme }) => theme.colors.brown};
+        `
+      : css`
+          border-top: 3px solid ${({ theme }) => theme.colors.white};
+        `}
 
   color: ${({ theme }) => theme.colors.black};
 `;
@@ -65,7 +63,7 @@ const Lobby = () => {
         <span>현재 접속중인 유저</span>
       </StLeftUpperBar>
       <StUserListContainer>
-        {selectedTab === "user" ? <UserList /> : <Conversation />}
+        {selectedTab === "user" ? <UserList /> : <ConversationList />}
       </StUserListContainer>
       <StLeftLowerBar onClick={hadnelTabClick}>
         <StUserOrChatroomButton
