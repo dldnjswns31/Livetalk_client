@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import conversationAPI from "../../../api/conversations";
@@ -24,6 +24,22 @@ const StChattingContent = styled.div`
   width: 100%;
   padding: 1rem;
   flex: 8 0;
+  overflow-y: scroll;
+`;
+
+const StMessageContainer = styled.div<{ myself: boolean }>`
+  display: inline-flex;
+  justify-content: ${({ myself }) => (myself ? "right" : "left")};
+  width: 100%;
+  padding: 0 1rem;
+  margin-bottom: 0.5rem;
+`;
+
+const StMessage = styled.span<{ myself: boolean }>`
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+  background-color: ${({ theme, myself }) =>
+    myself ? theme.colors.yellow : theme.colors.white};
 `;
 
 const StChattingFormContainer = styled.div`
@@ -64,81 +80,75 @@ const StChattingForm = styled.form`
   }
 `;
 
-const StMessageContainer = styled.div<{ myself: boolean }>`
-  display: inline-flex;
-  justify-content: ${({ myself }) => (myself ? "right" : "left")};
-  width: 100%;
-  padding: 0 1rem;
-  margin-bottom: 0.5rem;
-`;
-
-const StMessage = styled.span<{ myself: boolean }>`
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
-  background-color: ${({ theme, myself }) =>
-    myself ? theme.colors.yellow : theme.colors.white};
-`;
-
 const Chatting = () => {
   const [messages, setMessages] = useState<
-    { from: string; to: string; message: string }[] | null
-  >(null);
+    {
+      from: string;
+      to: string;
+      message: string;
+      _id: string;
+      createdAt: string;
+      isRead: string;
+    }[]
+  >([]);
 
   const { register, handleSubmit, reset } = useForm<{ message: string }>();
   const socket = useContext(SocketContext);
   const loginUserData = useAppSelector((state) => state.user);
   const selectedUser = useAppSelector((state) => state.selectedUser);
-  const currentUserList = useAppSelector((state) => state.userList);
 
-  // 개인메세지 수신했을 때
+  // 메세지 송/수신했을 때 채팅 내용 갱신
   useEffect(() => {
     if (socket) {
       socket.on("private message", (data) => {
-        console.log("귓속말!", data);
-        console.log(currentUserList);
+        reloadMessage(selectedUser.uid);
       });
+      return () => {
+        socket.removeListener("private message");
+      };
     }
-  }, [socket]);
+  }, [socket, selectedUser]);
 
-  // 현재 접속한 유저
+  // 해당 유저와의 채팅 내역 http 요청
   useEffect(() => {
-    if (socket) {
-      socket.emit("userlist");
-      socket.on("userlist", (data) => {
-        console.log(data);
-      });
-    }
-
-    return () => {
-      socket?.removeListener("userlist");
-    };
+    reloadMessage(selectedUser.uid);
   }, [selectedUser]);
 
-  useEffect(() => {
-    // 해당 유저와의 메세지 내역 http 요청
-    // 없다면 그냥 빈 배열을 setState
-  }, [selectedUser]);
+  const reloadMessage = (uid: string) => {
+    conversationAPI.getConversation(uid).then((res) => {
+      if (res.data.length) {
+        setMessages(res.data);
+      } else {
+        setMessages([]);
+      }
+    });
+  };
+
+  const onSubmit = (data: { message: string }) => {
+    const { message } = data;
+    conversationAPI.sendMessage(message, selectedUser.uid);
+    reset();
+  };
   return (
     <>
       <StChattingTitle>
         <span>{selectedUser.nickname}</span>
       </StChattingTitle>
       <StChattingContent>
-        {currentUserList
-          .find((item) => item.uid === selectedUser.uid)
-          ?.messages.map((data, idx) => (
+        {messages.length &&
+          messages.map((message) => (
             <StMessageContainer
-              key={idx}
-              myself={data.from === loginUserData.uid}
+              key={message._id}
+              myself={message.from === loginUserData.uid}
             >
-              <StMessage myself={data.from === loginUserData.uid}>
-                {data.message}
+              <StMessage myself={message.from === loginUserData.uid}>
+                {message.message}
               </StMessage>
             </StMessageContainer>
           ))}
       </StChattingContent>
       <StChattingFormContainer>
-        <StChattingForm onSubmit={(e) => e.preventDefault()}>
+        <StChattingForm onSubmit={handleSubmit(onSubmit)}>
           <input type="text" {...register("message", { required: true })} />
           <div>
             <button>send</button>

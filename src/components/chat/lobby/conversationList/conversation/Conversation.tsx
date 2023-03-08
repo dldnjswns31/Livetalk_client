@@ -1,7 +1,7 @@
 import styled from "styled-components";
 
 import reactIcon from "../../../../../assets/react.svg";
-import { useAppDispatch } from "../../../../../hooks";
+import { useAppDispatch, useAppSelector } from "../../../../../hooks";
 import { saveSelectedUser } from "../../../../../redux/slice/selectedUserSlice";
 
 const StConversationContainer = styled.div`
@@ -47,17 +47,46 @@ const StConversationLastmessage = styled.div`
 
 const StTime = styled.div`
   flex: 1 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
+interface IConversationProps {
+  createdAt: string;
+  lastMessage: string;
+  participantObj: {
+    _id: string;
+    nickname: string;
+  }[];
+  updatedAt: string;
+  __v: string;
+  _id: string;
+}
+
 const Conversation = ({
-  user,
+  conversation,
 }: {
-  user: { uid: string; nickname: string };
+  conversation: IConversationProps;
 }) => {
+  const loginUserData = useAppSelector((state) => state.user);
+  const selectedUser = useAppSelector((state) => state.selectedUser);
   const dispatch = useAppDispatch();
 
+  const findUser = (arr: { _id: string; nickname: string }[]) => {
+    for (let user of arr) {
+      if (user._id !== loginUserData.uid) {
+        return { uid: user._id, nickname: user.nickname };
+      }
+    }
+    return null;
+  };
+
   const handleClick = () => {
-    dispatch(saveSelectedUser(user));
+    const user = findUser(conversation.participantObj);
+    if (user && user.uid !== selectedUser.uid) {
+      dispatch(saveSelectedUser(user));
+    }
   };
 
   return (
@@ -67,13 +96,13 @@ const Conversation = ({
       </StUserImage>
       <StConversation>
         <StConversationName>
-          <span>{user.nickname}</span>
+          <span>{findUser(conversation.participantObj)?.nickname}</span>
         </StConversationName>
         <StConversationLastmessage>
-          <span>마지막 메세지</span>
+          <span>{conversation.lastMessage}</span>
         </StConversationLastmessage>
       </StConversation>
-      <StTime></StTime>
+      <StTime>{conversation.updatedAt}</StTime>
     </StConversationContainer>
   );
 };

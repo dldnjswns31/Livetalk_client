@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import conversationAPI from "../../../../api/conversations";
+import { SocketContext } from "../../../../context/SocketContext";
 import Conversation from "./conversation/Conversation";
 
 const StNotifyContainer = styled.div`
@@ -13,69 +14,40 @@ const StNotifyContainer = styled.div`
 
 const StNotify = styled.span``;
 
-const StConversationContainer = styled.div`
-  display: inline-flex;
-  width: 100%;
-  height: 4rem;
-`;
-
-const StUserImage = styled.div`
-  flex: 1 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  img {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    background-color: ${({ theme }) => theme.colors.white};
-  }
-`;
-
-const StConversation = styled.div`
-  flex: 5 0;
-  display: flex;
-  flex-direction: column;
-  padding: 0 0.5rem;
-`;
-
-const StConversationName = styled.div`
-  flex: 1 0;
-  display: flex;
-  align-items: flex-end;
-  margin-bottom: 0.2rem;
-`;
-
-const StConversationLastmessage = styled.div`
-  flex: 1 0;
-  display: flex;
-  align-items: flex-start;
-  margin-top: 0.2rem;
-`;
-
-const StTime = styled.div`
-  flex: 1 0;
-`;
-
 const ConversationList = () => {
-  const [conversations, setConversations] = useState([
-    { uid: "123", nickname: "test" },
-    { uid: "123", nickname: "test" },
-  ]);
+  const [conversations, setConversations] = useState([]);
+
+  const socket = useContext(SocketContext);
 
   // 렌더링 시 대화 목록 불러오기
   useEffect(() => {
     conversationAPI.getAllConverstaions().then((res) => {
-      if (res.data.length) setConversations(res.data);
+      let conversationArr = res.data;
+      if (conversationArr.length) {
+        setConversations(conversationArr);
+      }
     });
   }, []);
+
+  // 대화 도착 시 목록 리렌더링
+  useEffect(() => {
+    if (socket) {
+      socket.on("private message", () => {
+        conversationAPI.getAllConverstaions().then((res) => {
+          let conversationArr = res.data;
+          if (conversationArr.length) {
+            setConversations(conversationArr);
+          }
+        });
+      });
+    }
+  }, [socket]);
 
   return (
     <>
       {conversations.length ? (
-        conversations.map((user, index) => (
-          <Conversation key={index} user={user} />
+        conversations.map((conversation, index) => (
+          <Conversation key={index} conversation={conversation} />
         ))
       ) : (
         <StNotifyContainer>
