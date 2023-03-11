@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 import conversationAPI from "../../../api/conversations";
@@ -36,10 +36,12 @@ const StMessageContainer = styled.div<{ myself: boolean }>`
 `;
 
 const StMessage = styled.span<{ myself: boolean }>`
+  max-width: 60%;
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   background-color: ${({ theme, myself }) =>
     myself ? theme.colors.yellow : theme.colors.white};
+  word-break: break-all;
 `;
 
 const StChattingFormContainer = styled.div`
@@ -91,6 +93,7 @@ const Chatting = () => {
       isRead: string;
     }[]
   >([]);
+  const chatWindowRef = useRef<HTMLDivElement>(null);
 
   const { register, handleSubmit, reset } = useForm<{ message: string }>();
   const socket = useContext(SocketContext);
@@ -114,6 +117,11 @@ const Chatting = () => {
     reloadMessage(selectedUser.uid);
   }, [selectedUser]);
 
+  useEffect(() => {
+    if (chatWindowRef.current)
+      chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+  }, [messages]);
+
   const reloadMessage = (uid: string) => {
     conversationAPI.getConversation(uid).then((res) => {
       if (res.data.length) {
@@ -134,7 +142,7 @@ const Chatting = () => {
       <StChattingTitle>
         <span>{selectedUser.nickname}</span>
       </StChattingTitle>
-      <StChattingContent>
+      <StChattingContent ref={chatWindowRef}>
         {messages.length &&
           messages.map((message) => (
             <StMessageContainer

@@ -43,6 +43,10 @@ const StConversationLastmessage = styled.div`
   display: flex;
   align-items: flex-start;
   margin-top: 0.2rem;
+
+  span {
+    word-break: break-all;
+  }
 `;
 
 const StTime = styled.div`
@@ -99,7 +103,11 @@ const Conversation = ({
           <span>{findUser(conversation.participantObj)?.nickname}</span>
         </StConversationName>
         <StConversationLastmessage>
-          <span>{conversation.lastMessage}</span>
+          <span>
+            {conversation.lastMessage.length > 100
+              ? conversation.lastMessage.slice(0, 100) + "..."
+              : conversation.lastMessage}
+          </span>
         </StConversationLastmessage>
       </StConversation>
       <StTime>{conversation.updatedAt}</StTime>
