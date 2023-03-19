@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import conversationAPI from "../../../../api/conversations";
 import { SocketContext } from "../../../../context/SocketContext";
+import convertDate from "../../../../utils/convertDate";
 import Conversation from "./conversation/Conversation";
 
 const StNotifyContainer = styled.div`
@@ -22,6 +23,7 @@ const ConversationList = () => {
   // 렌더링 시 대화 목록 불러오기
   useEffect(() => {
     conversationAPI.getAllConverstaions().then((res) => {
+      console.log(res.data);
       let conversationArr = res.data;
       if (conversationArr.length) {
         setConversations(conversationArr);

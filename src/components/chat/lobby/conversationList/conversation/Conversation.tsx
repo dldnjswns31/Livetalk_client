@@ -3,6 +3,7 @@ import styled from "styled-components";
 import reactIcon from "../../../../../assets/react.svg";
 import { useAppDispatch, useAppSelector } from "../../../../../hooks";
 import { saveSelectedUser } from "../../../../../redux/slice/selectedUserSlice";
+import convertDate from "../../../../../utils/convertDate";
 
 const StConversationContainer = styled.div`
   display: inline-flex;
@@ -25,7 +26,7 @@ const StUserImage = styled.div`
 `;
 
 const StConversation = styled.div`
-  flex: 5 0;
+  flex: 4 0;
   display: flex;
   flex-direction: column;
   padding: 0 0.5rem;
@@ -50,9 +51,9 @@ const StConversationLastmessage = styled.div`
 `;
 
 const StTime = styled.div`
-  flex: 1 0;
+  flex: 2 0;
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
 `;
 
@@ -110,7 +111,7 @@ const Conversation = ({
           </span>
         </StConversationLastmessage>
       </StConversation>
-      <StTime>{conversation.updatedAt}</StTime>
+      <StTime>{convertDate(conversation.updatedAt)}</StTime>
     </StConversationContainer>
   );
 };

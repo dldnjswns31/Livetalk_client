@@ -6,6 +6,7 @@ import conversationAPI from "../../../api/conversations";
 import { SocketContext } from "../../../context/SocketContext";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
 import { saveCurrentUserList } from "../../../redux/slice/userListSlice";
+import convertDate from "../../../utils/convertDate";
 
 const StChattingTitle = styled.div`
   display: inline-flex;
@@ -125,7 +126,8 @@ const Chatting = () => {
   const reloadMessage = (uid: string) => {
     conversationAPI.getConversation(uid).then((res) => {
       if (res.data.length) {
-        setMessages(res.data);
+        const messages = res.data;
+        setMessages(messages);
       } else {
         setMessages([]);
       }
@@ -137,6 +139,7 @@ const Chatting = () => {
     conversationAPI.sendMessage(message, selectedUser.uid);
     reset();
   };
+
   return (
     <>
       <StChattingTitle>
@@ -149,9 +152,25 @@ const Chatting = () => {
               key={message._id}
               myself={message.from === loginUserData.uid}
             >
-              <StMessage myself={message.from === loginUserData.uid}>
+              {message.from === loginUserData.uid ? (
+                <>
+                  <div>{convertDate(message.createdAt)}</div>
+                  <StMessage myself={message.from === loginUserData.uid}>
+                    {message.message}
+                  </StMessage>
+                </>
+              ) : (
+                <>
+                  <StMessage myself={message.from === loginUserData.uid}>
+                    {message.message}
+                  </StMessage>
+                  <div>{convertDate(message.createdAt)}</div>
+                </>
+              )}
+              {/* <StMessage myself={message.from === loginUserData.uid}>
                 {message.message}
               </StMessage>
+              <div>{convertDate(message.createdAt)}</div> */}
             </StMessageContainer>
           ))}
       </StChattingContent>
