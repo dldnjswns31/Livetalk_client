@@ -1,4 +1,4 @@
-import { convertTime } from "./convertDate";
+import { convertMessageTime } from "./convertDate";
 
 const removeDuplicateDate = (
   messages: {
@@ -11,7 +11,7 @@ const removeDuplicateDate = (
   }[]
 ) => {
   messages = messages.map((item) => {
-    let date = convertTime(item.createdAt);
+    let date = convertMessageTime(item.createdAt);
     if (date) item.createdAt = date;
     return item;
   });

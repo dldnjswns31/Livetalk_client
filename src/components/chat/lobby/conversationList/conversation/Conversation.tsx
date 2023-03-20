@@ -3,7 +3,7 @@ import styled from "styled-components";
 import reactIcon from "../../../../../assets/react.svg";
 import { useAppDispatch, useAppSelector } from "../../../../../hooks";
 import { saveSelectedUser } from "../../../../../redux/slice/selectedUserSlice";
-import { convertDate } from "../../../../../utils/convertDate";
+import { convertConversationDate } from "../../../../../utils/convertDate";
 
 const StConversationContainer = styled.div`
   display: inline-flex;
@@ -111,7 +111,7 @@ const Conversation = ({
           </span>
         </StConversationLastmessage>
       </StConversation>
-      <StTime>{convertDate(conversation.updatedAt)}</StTime>
+      <StTime>{convertConversationDate(conversation.updatedAt)}</StTime>
     </StConversationContainer>
   );
 };

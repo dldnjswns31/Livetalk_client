@@ -1,4 +1,10 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import React, {
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
 
@@ -129,10 +135,14 @@ const Chatting = () => {
     reloadMessage(selectedUser.uid);
   }, [selectedUser]);
 
-  useEffect(() => {
-    if (chatWindowRef.current)
-      chatWindowRef.current.scrollTop = chatWindowRef.current.scrollHeight;
+  // 메세지 수신 시 스크롤 아래로 이동
+  useLayoutEffect(() => {
+    scrollToBottom(chatWindowRef);
   }, [messages]);
+
+  const scrollToBottom = (ref: React.RefObject<HTMLDivElement>) => {
+    if (ref.current) ref.current.scrollIntoView();
+  };
 
   const reloadMessage = (uid: string) => {
     conversationAPI.getConversation(uid).then((res) => {
@@ -155,7 +165,7 @@ const Chatting = () => {
       <StChattingTitle>
         <span>{selectedUser.nickname}</span>
       </StChattingTitle>
-      <StChattingContent ref={chatWindowRef}>
+      <StChattingContent>
         {messages.length &&
           messages.map((message) => (
             <StMessageContainer
@@ -181,6 +191,7 @@ const Chatting = () => {
                   </StMessageTimeContainer>
                 </>
               )}
+              <div ref={chatWindowRef}></div>
             </StMessageContainer>
           ))}
       </StChattingContent>
