@@ -33,6 +33,21 @@ const StChattingContent = styled.div`
   overflow-y: scroll;
 `;
 
+const StDateDivideContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem 0;
+`;
+
+const StDateDivide = styled.div`
+  padding: 0.5rem;
+  background-color: ${({ theme }) => theme.colors.dark_blue_2};
+  border-radius: 1rem;
+  color: ${({ theme }) => theme.colors.white};
+  font-size: 0.6rem;
+`;
+
 const StMessageContainer = styled.div<{ myself: boolean }>`
   display: inline-flex;
   justify-content: ${({ myself }) => (myself ? "right" : "left")};
@@ -109,6 +124,7 @@ const Chatting = () => {
       _id: string;
       createdAt: string;
       isRead: string;
+      date: string;
     }[]
   >([]);
   const chatWindowRef = useRef<HTMLDivElement>(null);
@@ -168,31 +184,38 @@ const Chatting = () => {
       <StChattingContent>
         {messages.length &&
           messages.map((message) => (
-            <StMessageContainer
-              key={message._id}
-              myself={message.from === loginUserData.uid}
-            >
-              {message.from === loginUserData.uid ? (
-                <>
-                  <StMessageTimeContainer>
-                    <StMessageTime>{message.createdAt}</StMessageTime>
-                  </StMessageTimeContainer>
-                  <StMessage myself={message.from === loginUserData.uid}>
-                    {message.message}
-                  </StMessage>
-                </>
-              ) : (
-                <>
-                  <StMessage myself={message.from === loginUserData.uid}>
-                    {message.message}
-                  </StMessage>
-                  <StMessageTimeContainer>
-                    <StMessageTime>{message.createdAt}</StMessageTime>
-                  </StMessageTimeContainer>
-                </>
+            <>
+              {message.date && (
+                <StDateDivideContainer key={message.date}>
+                  <StDateDivide>{message.date}</StDateDivide>
+                </StDateDivideContainer>
               )}
-              <div ref={chatWindowRef}></div>
-            </StMessageContainer>
+              <StMessageContainer
+                key={message._id}
+                myself={message.from === loginUserData.uid}
+              >
+                {message.from === loginUserData.uid ? (
+                  <>
+                    <StMessageTimeContainer>
+                      <StMessageTime>{message.createdAt}</StMessageTime>
+                    </StMessageTimeContainer>
+                    <StMessage myself={message.from === loginUserData.uid}>
+                      {message.message}
+                    </StMessage>
+                  </>
+                ) : (
+                  <>
+                    <StMessage myself={message.from === loginUserData.uid}>
+                      {message.message}
+                    </StMessage>
+                    <StMessageTimeContainer>
+                      <StMessageTime>{message.createdAt}</StMessageTime>
+                    </StMessageTimeContainer>
+                  </>
+                )}
+                <div ref={chatWindowRef}></div>
+              </StMessageContainer>
+            </>
           ))}
       </StChattingContent>
       <StChattingFormContainer>

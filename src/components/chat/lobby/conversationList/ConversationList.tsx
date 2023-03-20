@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import conversationAPI from "../../../../api/conversations";
 import { SocketContext } from "../../../../context/SocketContext";
-import { convertDate } from "../../../../utils/convertDate";
 import Conversation from "./conversation/Conversation";
 
 const StNotifyContainer = styled.div`

@@ -17,6 +17,17 @@ const getDate = (formattedTime: Date) => {
   return `${month}월 ${day}일`;
 };
 
+const WEEKDAY = ["일", "월", "화", "수", "목", "금", "토"];
+
+const getFullDate = (formattedTime: Date) => {
+  const year = formattedTime.getFullYear();
+  const month = formattedTime.getMonth() + 1;
+  const day = formattedTime.getDate();
+  const week = WEEKDAY[formattedTime.getDay()];
+
+  return `${year}년 ${month}월 ${day}일 ${week}요일`;
+};
+
 // 채팅방 날짜 변환
 const convertConversationDate = (time: string) => {
   if (!time.length) return null;
@@ -40,14 +51,10 @@ const convertConversationDate = (time: string) => {
 const convertMessageTime = (time: string) => {
   const formattedTime = new Date(time);
 
-  let hours = formattedTime.getHours();
-  const minutes = formattedTime.getMinutes();
-  const ampm = hours >= 12 ? "오후" : "오전";
-  hours = hours % 12;
-  hours = hours ? hours : 12; // 0시를 12시로 변환
-  const hoursStr = hours < 10 ? `0${hours}` : `${hours}`;
-  const minutesStr = minutes < 10 ? `0${minutes}` : `${minutes}`;
-  return `${ampm} ${hoursStr}:${minutesStr}`;
+  return {
+    messageTime: getTime(formattedTime),
+    messageDate: getFullDate(formattedTime),
+  };
 };
 
 export { convertConversationDate, convertMessageTime };
