@@ -13,10 +13,11 @@ const StLeftUpperBar = styled.div`
   color: ${({ theme }) => theme.colors.white};
 `;
 
-const StUserListContainer = styled.div`
+const StLobby = styled.div`
   display: flex;
   flex-direction: column;
   height: 80%;
+  padding: 0 1rem;
   overflow-y: scroll;
 `;
 
@@ -62,9 +63,9 @@ const Lobby = () => {
       <StLeftUpperBar>
         <span>현재 접속중인 유저</span>
       </StLeftUpperBar>
-      <StUserListContainer>
+      <StLobby>
         {selectedTab === "user" ? <UserList /> : <ConversationList />}
-      </StUserListContainer>
+      </StLobby>
       <StLeftLowerBar onClick={hadnelTabClick}>
         <StUserOrChatroomButton
           selected={selectedTab === "user"}

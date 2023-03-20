@@ -12,8 +12,8 @@ const StUser = styled.div`
 `;
 
 const StUserImage = styled.div`
-  flex: 1 0;
-  display: flex;
+  display: inline-flex;
+  width: 3rem;
   justify-content: center;
   align-items: center;
 

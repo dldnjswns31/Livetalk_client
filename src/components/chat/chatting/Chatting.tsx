@@ -112,6 +112,7 @@ const StMessageTimeContainer = styled.div`
 `;
 
 const StMessageTime = styled.span`
+  color: ${({ theme }) => theme.colors.gray_4};
   font-size: 0.6rem;
 `;
 

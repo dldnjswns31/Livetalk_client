@@ -3,6 +3,7 @@ import styled from "styled-components";
 import reactIcon from "../../../../../assets/react.svg";
 import { useAppDispatch, useAppSelector } from "../../../../../hooks";
 import { saveSelectedUser } from "../../../../../redux/slice/selectedUserSlice";
+import theme from "../../../../../styles/theme";
 import { convertConversationDate } from "../../../../../utils/convertDate";
 
 const StConversationContainer = styled.div`
@@ -12,8 +13,8 @@ const StConversationContainer = styled.div`
 `;
 
 const StUserImage = styled.div`
-  flex: 1 0;
-  display: flex;
+  display: inline-flex;
+  width: 3rem;
   justify-content: center;
   align-items: center;
 
@@ -46,6 +47,8 @@ const StConversationLastmessage = styled.div`
   margin-top: 0.2rem;
 
   span {
+    color: ${({ theme }) => theme.colors.gray_4};
+    font-size: 0.8rem;
     word-break: break-all;
   }
 `;
@@ -55,6 +58,8 @@ const StTime = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  color: ${({ theme }) => theme.colors.gray_4};
+  font-size: 0.8rem;
 `;
 
 interface IConversationProps {
@@ -105,8 +110,8 @@ const Conversation = ({
         </StConversationName>
         <StConversationLastmessage>
           <span>
-            {conversation.lastMessage.length > 100
-              ? conversation.lastMessage.slice(0, 100) + "..."
+            {conversation.lastMessage.length > 50
+              ? conversation.lastMessage.slice(0, 50) + "..."
               : conversation.lastMessage}
           </span>
         </StConversationLastmessage>

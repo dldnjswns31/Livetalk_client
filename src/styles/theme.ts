@@ -3,6 +3,7 @@ const theme = {
     gray_1: "#eeeeee",
     gray_2: "#cccccc",
     gray_3: "#aaaaaa",
+    gray_4: "#777777",
     yellow: "#fef01b",
     brown: "#3A1D1D",
     dark_blue: "#9bbbd4",
