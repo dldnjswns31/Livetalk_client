@@ -1,12 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import styled from "styled-components";
-import conversationAPI from "../../../api/conversations";
 
+import conversationAPI from "../../../api/conversations";
 import { SocketContext } from "../../../context/SocketContext";
-import { useAppDispatch, useAppSelector } from "../../../hooks";
-import { saveCurrentUserList } from "../../../redux/slice/userListSlice";
-import convertDate from "../../../utils/convertDate";
+import { useAppSelector } from "../../../hooks";
+import removeDuplicateDate from "../../../utils/removeDuplicateDate";
 
 const StChattingTitle = styled.div`
   display: inline-flex;
@@ -31,6 +30,7 @@ const StChattingContent = styled.div`
 const StMessageContainer = styled.div<{ myself: boolean }>`
   display: inline-flex;
   justify-content: ${({ myself }) => (myself ? "right" : "left")};
+  align-items: flex-end;
   width: 100%;
   padding: 0 1rem;
   margin-bottom: 0.5rem;
@@ -83,6 +83,17 @@ const StChattingForm = styled.form`
   }
 `;
 
+const StMessageTimeContainer = styled.div`
+  display: inline-flex;
+  align-items: flex-end;
+  height: 100%;
+  margin: 0 0.5rem 0 0.5rem;
+`;
+
+const StMessageTime = styled.span`
+  font-size: 0.6rem;
+`;
+
 const Chatting = () => {
   const [messages, setMessages] = useState<
     {
@@ -126,7 +137,7 @@ const Chatting = () => {
   const reloadMessage = (uid: string) => {
     conversationAPI.getConversation(uid).then((res) => {
       if (res.data.length) {
-        const messages = res.data;
+        const messages = removeDuplicateDate(res.data);
         setMessages(messages);
       } else {
         setMessages([]);
@@ -139,7 +150,6 @@ const Chatting = () => {
     conversationAPI.sendMessage(message, selectedUser.uid);
     reset();
   };
-
   return (
     <>
       <StChattingTitle>
@@ -154,7 +164,9 @@ const Chatting = () => {
             >
               {message.from === loginUserData.uid ? (
                 <>
-                  <div>{convertDate(message.createdAt)}</div>
+                  <StMessageTimeContainer>
+                    <StMessageTime>{message.createdAt}</StMessageTime>
+                  </StMessageTimeContainer>
                   <StMessage myself={message.from === loginUserData.uid}>
                     {message.message}
                   </StMessage>
@@ -164,13 +176,11 @@ const Chatting = () => {
                   <StMessage myself={message.from === loginUserData.uid}>
                     {message.message}
                   </StMessage>
-                  <div>{convertDate(message.createdAt)}</div>
+                  <StMessageTimeContainer>
+                    <StMessageTime>{message.createdAt}</StMessageTime>
+                  </StMessageTimeContainer>
                 </>
               )}
-              {/* <StMessage myself={message.from === loginUserData.uid}>
-                {message.message}
-              </StMessage>
-              <div>{convertDate(message.createdAt)}</div> */}
             </StMessageContainer>
           ))}
       </StChattingContent>

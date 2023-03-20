@@ -1,4 +1,6 @@
 const convertDate = (time: string) => {
+  if (!time.length) return null;
+
   const formattedTime = new Date(time);
   const now = new Date();
   const diffTime = now.getTime() - formattedTime.getTime();
@@ -24,4 +26,17 @@ const convertDate = (time: string) => {
   }
 };
 
-export default convertDate;
+const convertTime = (time: string) => {
+  const formattedTime = new Date(time);
+
+  let hours = formattedTime.getHours();
+  const minutes = formattedTime.getMinutes();
+  const ampm = hours >= 12 ? "오후" : "오전";
+  hours = hours % 12;
+  hours = hours ? hours : 12; // 0시를 12시로 변환
+  const hoursStr = hours < 10 ? `0${hours}` : `${hours}`;
+  const minutesStr = minutes < 10 ? `0${minutes}` : `${minutes}`;
+  return `${ampm} ${hoursStr}:${minutesStr}`;
+};
+
+export { convertDate, convertTime };
