@@ -2,6 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import conversationAPI from "../../../../api/conversations";
 import { SocketContext } from "../../../../context/SocketContext";
+import { useAppSelector } from "../../../../hooks";
 import Conversation from "./conversation/Conversation";
 
 const StNotifyContainer = styled.div`
@@ -18,6 +19,7 @@ const ConversationList = () => {
   const [conversations, setConversations] = useState([]);
 
   const socket = useContext(SocketContext);
+  const selectedUser = useAppSelector((state) => state.selectedUser);
 
   // 렌더링 시 대화 목록 불러오기
   useEffect(() => {
@@ -40,8 +42,11 @@ const ConversationList = () => {
           }
         });
       });
+      return () => {
+        socket.removeListener("private message");
+      };
     }
-  }, [socket]);
+  }, [socket, selectedUser]);
 
   return (
     <>
