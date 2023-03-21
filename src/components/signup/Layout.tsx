@@ -97,7 +97,7 @@ const Layout = () => {
   const onSubmit = async (data: ISignupForm) => {
     try {
       const response = await authAPI.signup(data);
-      navigate("/");
+      navigate("/login");
     } catch (err) {
       console.log(err);
     }

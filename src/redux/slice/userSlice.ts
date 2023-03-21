@@ -8,7 +8,7 @@ export interface IUser {
 
 export const userSlice = createSlice({
   name: "user",
-  initialState: {},
+  initialState: {} as IUser,
   reducers: {
     saveUserData: (state, action: PayloadAction<IUser>) => action.payload,
   },
