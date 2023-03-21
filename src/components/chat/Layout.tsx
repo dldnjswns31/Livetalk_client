@@ -3,7 +3,7 @@ import styled from "styled-components";
 import withAuth from "../HOC/withAuth";
 import { useAppSelector } from "../../hooks";
 import Lobby from "./lobby/Lobby";
-import Chatting from "./chatting/Chatting";
+import MessageBox from "./MessageBox/MessageBox";
 
 const StPageContainer = styled.div`
   display: inline-flex;
@@ -55,7 +55,7 @@ const Layout = () => {
           </StChatLeftContainer>
           <StChatRightContainer>
             {Object.keys(selectedUser).length ? (
-              <Chatting />
+              <MessageBox />
             ) : (
               <span>채팅방을 열어주세요.</span>
             )}

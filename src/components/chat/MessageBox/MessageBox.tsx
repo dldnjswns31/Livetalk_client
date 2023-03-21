@@ -116,7 +116,7 @@ const StMessageTime = styled.span`
   font-size: 0.6rem;
 `;
 
-const Chatting = () => {
+const MessageBox = () => {
   const [messages, setMessages] = useState<
     {
       from: string;
@@ -186,11 +186,11 @@ const Chatting = () => {
         {messages.length &&
           messages.map((message) => (
             <>
-              {message.date && (
+              {/* {message.date && (
                 <StDateDivideContainer key={message.date}>
                   <StDateDivide>{message.date}</StDateDivide>
                 </StDateDivideContainer>
-              )}
+              )} */}
               <StMessageContainer
                 key={message._id}
                 myself={message.from === loginUserData.uid}
@@ -231,4 +231,4 @@ const Chatting = () => {
   );
 };
 
-export default Chatting;
+export default MessageBox;
