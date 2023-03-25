@@ -3,7 +3,7 @@ import styled from "styled-components";
 import withAuth from "../HOC/withAuth";
 import { useAppSelector } from "../../hooks";
 import Lobby from "./lobby/Lobby";
-import MessageBox from "./MessageBox/MessageBox";
+import MessageBox from "./messageBox/MessageBox";
 
 const StPageContainer = styled.div`
   display: inline-flex;
