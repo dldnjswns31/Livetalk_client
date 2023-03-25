@@ -23,7 +23,10 @@ const removeDuplicateDate = (
   for (let i = 1; i < messages.length; i++) {
     let prevMessage = messages[i - 1];
     let currentMessage = messages[i];
-    if (prevMessage.createdAt === currentMessage.createdAt)
+    if (
+      prevMessage.createdAt === currentMessage.createdAt &&
+      prevMessage.from === currentMessage.from
+    )
       prevMessage.createdAt = "";
 
     if (prevDate === currentMessage.date) {
