@@ -12,12 +12,6 @@ const conversationAPI = {
   getConversation: (uid: string) => {
     return conversation("/conversations/query", { params: { uid } });
   },
-  sendMessage: (message: string, to: string) => {
-    return conversation.post("/message", {
-      message,
-      to,
-    });
-  },
 };
 
 export default conversationAPI;

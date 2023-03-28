@@ -33,7 +33,7 @@ const UserList = () => {
   // 유저 입/퇴장시 접속 유저 목록 갱신
   useEffect(() => {
     if (socket) {
-      socket.emit("getUserlist");
+      socket.emit("userlist");
 
       socket.on("userlist", (data: { uid: string; nickname: string }[]) => {
         setConnectingUsers(data);
@@ -47,7 +47,7 @@ const UserList = () => {
 
   return (
     <>
-      {userList.length && connectingUsers.length
+      {userList.length !== 0
         ? userList.map((userData, index) => {
             return (
               <User

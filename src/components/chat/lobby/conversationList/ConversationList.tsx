@@ -34,7 +34,7 @@ const ConversationList = () => {
   // 대화 도착 시 목록 리렌더링
   useEffect(() => {
     if (socket) {
-      socket.on("private message", () => {
+      socket.on("reload conversation", () => {
         conversationAPI.getAllConverstaions().then((res) => {
           let conversationArr = res.data;
           if (conversationArr.length) {
@@ -43,7 +43,7 @@ const ConversationList = () => {
         });
       });
       return () => {
-        socket.removeListener("private message");
+        socket.removeListener("reload conversation");
       };
     }
   }, [socket, selectedUser]);

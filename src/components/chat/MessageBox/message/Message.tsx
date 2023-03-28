@@ -56,15 +56,18 @@ const Message = ({
     _id: string;
     createdAt: string;
     isRead: string;
-    date: string;
+    formattedDate: string;
+    formattedTime: string;
+    showedTime: string;
+    showedDate: string;
   };
 }) => {
   const loginUserData = useAppSelector((state) => state.user);
   return (
     <>
-      {message.date && (
-        <StDateDivideContainer key={message.date}>
-          <StDateDivide>{message.date}</StDateDivide>
+      {message.showedDate && (
+        <StDateDivideContainer key={message.showedDate}>
+          <StDateDivide>{message.showedDate}</StDateDivide>
         </StDateDivideContainer>
       )}
       <StMessageContainer
@@ -74,7 +77,7 @@ const Message = ({
         {message.from === loginUserData.uid ? (
           <>
             <StMessageTimeContainer>
-              <StMessageTime>{message.createdAt}</StMessageTime>
+              <StMessageTime>{message.showedTime}</StMessageTime>
             </StMessageTimeContainer>
             <StMessage myself={message.from === loginUserData.uid}>
               {message.message}
@@ -86,7 +89,7 @@ const Message = ({
               {message.message}
             </StMessage>
             <StMessageTimeContainer>
-              <StMessageTime>{message.createdAt}</StMessageTime>
+              <StMessageTime>{message.showedTime}</StMessageTime>
             </StMessageTimeContainer>
           </>
         )}

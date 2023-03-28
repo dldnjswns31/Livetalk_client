@@ -81,27 +81,43 @@ const MessageBox = () => {
       _id: string;
       createdAt: string;
       isRead: string;
-      date: string;
+      formattedDate: string;
+      formattedTime: string;
+      showedTime: string;
+      showedDate: string;
     }[]
   >([]);
   const chatWindowRef = useRef<HTMLDivElement>(null);
 
   const { register, handleSubmit, reset } = useForm<{ message: string }>();
   const socket = useContext(SocketContext);
-  const loginUserData = useAppSelector((state) => state.user);
   const selectedUser = useAppSelector((state) => state.selectedUser);
+
+  // 해당 conversationId room 참가
+  useEffect(() => {
+    if (socket) {
+      socket.emit("join room", selectedUser);
+    }
+
+    return () => {
+      if (socket) {
+        socket.emit("leave room", selectedUser);
+      }
+    };
+  }, [socket, selectedUser]);
 
   // 메세지 송/수신했을 때 채팅 내용 갱신
   useEffect(() => {
     if (socket) {
-      socket.on("private message", (data) => {
-        reloadMessage(selectedUser.uid);
+      socket.on("private message", (message) => {
+        const newMessageArr = removeDuplicateDate([...messages, message]);
+        setMessages(newMessageArr);
       });
       return () => {
         socket.removeListener("private message");
       };
     }
-  }, [socket, selectedUser]);
+  }, [socket, selectedUser, messages]);
 
   // 해당 유저와의 채팅 내역 http 요청
   useEffect(() => {
@@ -130,16 +146,17 @@ const MessageBox = () => {
 
   const onSubmit = (data: { message: string }) => {
     const { message } = data;
-    conversationAPI.sendMessage(message, selectedUser.uid);
+    socket?.emit("message", { message, to: selectedUser.uid });
     reset();
   };
+
   return (
     <>
       <StChattingTitle>
         <span>{selectedUser.nickname}</span>
       </StChattingTitle>
       <StChattingContent>
-        {messages.length &&
+        {messages.length !== 0 &&
           messages.map((message) => (
             <Message key={message._id} message={message} />
           ))}
