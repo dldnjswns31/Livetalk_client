@@ -87,7 +87,11 @@ const MessageBox = () => {
       showedDate: string;
     }[]
   >([]);
+  const [isScroll, setIsScroll] = useState(false);
   const chatWindowRef = useRef<HTMLDivElement>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const firstMessageRef = useRef<HTMLDivElement | null>(null);
+  const messageLengthRef = useRef(0);
 
   const { register, handleSubmit, reset } = useForm<{ message: string }>();
   const socket = useContext(SocketContext);
@@ -112,6 +116,7 @@ const MessageBox = () => {
       socket.on("private message", (message) => {
         const newMessageArr = removeDuplicateDate([...messages, message]);
         setMessages(newMessageArr);
+        setIsScroll(true);
       });
       return () => {
         socket.removeListener("private message");
@@ -126,7 +131,50 @@ const MessageBox = () => {
 
   // 메세지 수신 시 스크롤 아래로 이동
   useLayoutEffect(() => {
-    scrollToBottom(chatWindowRef);
+    if (messageLengthRef.current === 0) {
+      scrollToBottom(chatWindowRef);
+    }
+    messageLengthRef.current = messages.length;
+  }, [messages]);
+
+  useLayoutEffect(() => {
+    if (isScroll) {
+      scrollToBottom(chatWindowRef);
+      setIsScroll((prev) => !prev);
+    }
+  }, [isScroll]);
+
+  // 스크롤 페이징
+  useEffect(() => {
+    // IntersectionObserver 객체 생성
+    const observer = new IntersectionObserver((entries) => {
+      // 첫 번째 메시지 엘리먼트가 뷰포트 안에 들어왔는지 확인
+      if (entries[0].isIntersecting) {
+        // 새로운 메시지를 가져옴
+        conversationAPI.getMoreMessage(messages[0]._id).then((res) => {
+          if (res.data.length) {
+            const prevMessages = removeDuplicateDate([
+              ...res.data,
+              ...messages,
+            ]);
+            setMessages(prevMessages);
+          } else {
+            observer.disconnect();
+          }
+        });
+      }
+    });
+    observerRef.current = observer;
+
+    // 첫 번째 메시지 엘리먼트를 감시 대상으로 등록
+    if (firstMessageRef.current) {
+      observer.observe(firstMessageRef.current);
+    }
+
+    return () => {
+      // observer 해제
+      observer.disconnect();
+    };
   }, [messages]);
 
   const scrollToBottom = (ref: React.RefObject<HTMLDivElement>) => {
@@ -157,8 +205,12 @@ const MessageBox = () => {
       </StChattingTitle>
       <StChattingContent>
         {messages.length !== 0 &&
-          messages.map((message) => (
-            <Message key={message._id} message={message} />
+          messages.map((message, index) => (
+            <Message
+              key={message._id}
+              message={message}
+              firstMessageRef={index === 0 ? firstMessageRef : null}
+            />
           ))}
         <div ref={chatWindowRef} />
       </StChattingContent>

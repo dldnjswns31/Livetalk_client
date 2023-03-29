@@ -48,6 +48,7 @@ const StMessageTime = styled.span`
 
 const Message = ({
   message,
+  firstMessageRef,
 }: {
   message: {
     from: string;
@@ -61,19 +62,17 @@ const Message = ({
     showedTime: string;
     showedDate: string;
   };
+  firstMessageRef: React.RefObject<HTMLDivElement> | null;
 }) => {
   const loginUserData = useAppSelector((state) => state.user);
   return (
-    <>
+    <div ref={firstMessageRef}>
       {message.showedDate && (
-        <StDateDivideContainer key={message.showedDate}>
+        <StDateDivideContainer>
           <StDateDivide>{message.showedDate}</StDateDivide>
         </StDateDivideContainer>
       )}
-      <StMessageContainer
-        key={message._id}
-        myself={message.from === loginUserData.uid}
-      >
+      <StMessageContainer myself={message.from === loginUserData.uid}>
         {message.from === loginUserData.uid ? (
           <>
             <StMessageTimeContainer>
@@ -94,7 +93,7 @@ const Message = ({
           </>
         )}
       </StMessageContainer>
-    </>
+    </div>
   );
 };
 
