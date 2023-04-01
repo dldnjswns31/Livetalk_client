@@ -1,7 +1,12 @@
-import Layout from "../components/chat/Layout";
+import { Chat } from "../components/chat";
+import St from "./styles";
 
 const ChatPage = () => {
-  return <Layout />;
+  return (
+    <St.PageContainer>
+      <Chat />
+    </St.PageContainer>
+  );
 };
 
 export default ChatPage;

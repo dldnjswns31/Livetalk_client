@@ -6,71 +6,13 @@ import React, {
   useState,
 } from "react";
 import { useForm } from "react-hook-form";
-import styled from "styled-components";
 
 import conversationAPI from "../../../api/conversations";
 import { SocketContext } from "../../../context/SocketContext";
 import { useAppSelector } from "../../../hooks";
 import removeDuplicateDate from "../../../utils/removeDuplicateDate";
-import Message from "./message/Message";
-
-const StChattingTitle = styled.div`
-  display: inline-flex;
-  justify-content: start;
-  align-items: center;
-  flex: 1 0;
-  width: 100%;
-  padding: 0 2rem;
-
-  span {
-    width: 100%;
-  }
-`;
-
-const StChattingContent = styled.div`
-  width: 100%;
-  padding: 1rem;
-  flex: 8 0;
-  overflow-y: scroll;
-`;
-
-const StChattingFormContainer = styled.div`
-  display: block;
-  width: 100%;
-  flex: 1 0;
-`;
-
-const StChattingForm = styled.form`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  padding: 0 2rem;
-  background-color: ${({ theme }) => theme.colors.white};
-
-  input {
-    flex: 10 0;
-    height: 60%;
-    margin-right: 1rem;
-  }
-
-  div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 1 0;
-    height: 60%;
-    margin-left: 1rem;
-
-    button {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: none;
-    }
-  }
-`;
+import { Message } from "./";
+import St from "./styles";
 
 const MessageBox = () => {
   const [messages, setMessages] = useState<
@@ -146,11 +88,8 @@ const MessageBox = () => {
 
   // 스크롤 페이징
   useEffect(() => {
-    // IntersectionObserver 객체 생성
     const observer = new IntersectionObserver((entries) => {
-      // 첫 번째 메시지 엘리먼트가 뷰포트 안에 들어왔는지 확인
       if (entries[0].isIntersecting) {
-        // 새로운 메시지를 가져옴
         conversationAPI.getMoreMessage(messages[0]._id).then((res) => {
           if (res.data.length) {
             const prevMessages = removeDuplicateDate([
@@ -165,23 +104,20 @@ const MessageBox = () => {
       }
     });
     observerRef.current = observer;
-
-    // 첫 번째 메시지 엘리먼트를 감시 대상으로 등록
     if (firstMessageRef.current) {
       observer.observe(firstMessageRef.current);
     }
 
     return () => {
-      // observer 해제
       observer.disconnect();
     };
   }, [messages]);
 
-  const scrollToBottom = (ref: React.RefObject<HTMLDivElement>) => {
+  function scrollToBottom(ref: React.RefObject<HTMLDivElement>) {
     if (ref.current) ref.current.scrollIntoView();
-  };
+  }
 
-  const reloadMessage = (uid: string) => {
+  function reloadMessage(uid: string) {
     conversationAPI.getConversation(uid).then((res) => {
       if (res.data.length) {
         const messages = removeDuplicateDate(res.data);
@@ -190,20 +126,20 @@ const MessageBox = () => {
         setMessages([]);
       }
     });
-  };
+  }
 
-  const onSubmit = (data: { message: string }) => {
+  function onSubmit(data: { message: string }) {
     const { message } = data;
     socket?.emit("message", { message, to: selectedUser.uid });
     reset();
-  };
+  }
 
   return (
     <>
-      <StChattingTitle>
+      <St.ChattingTitle>
         <span>{selectedUser.nickname}</span>
-      </StChattingTitle>
-      <StChattingContent>
+      </St.ChattingTitle>
+      <St.ChattingContent>
         {messages.length !== 0 &&
           messages.map((message, index) => (
             <Message
@@ -213,15 +149,15 @@ const MessageBox = () => {
             />
           ))}
         <div ref={chatWindowRef} />
-      </StChattingContent>
-      <StChattingFormContainer>
-        <StChattingForm onSubmit={handleSubmit(onSubmit)}>
+      </St.ChattingContent>
+      <St.ChattingFormContainer>
+        <St.ChattingForm onSubmit={handleSubmit(onSubmit)}>
           <input type="text" {...register("message", { required: true })} />
           <div>
             <button>send</button>
           </div>
-        </StChattingForm>
-      </StChattingFormContainer>
+        </St.ChattingForm>
+      </St.ChattingFormContainer>
     </>
   );
 };

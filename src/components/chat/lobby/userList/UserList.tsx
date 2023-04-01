@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
+
 import conversationAPI from "../../../../api/conversations";
 import { SocketContext } from "../../../../context/SocketContext";
 import { useAppSelector } from "../../../../hooks";
-import useSocket from "../../../../hooks/useSocket";
-import User from "./user/User";
+import { User } from "./";
 
 const UserList = () => {
   const [userList, setUserList] = useState<{ uid: string; nickname: string }[]>(

@@ -1,7 +1,12 @@
-import Layout from "../components/login/Layout";
+import { Login } from "../components/login";
+import St from "./styles";
 
 const LoginPage = () => {
-  return <Layout />;
+  return (
+    <St.PageContainer>
+      <Login />
+    </St.PageContainer>
+  );
 };
 
 export default LoginPage;

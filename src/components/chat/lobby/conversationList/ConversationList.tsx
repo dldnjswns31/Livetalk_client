@@ -1,19 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import styled from "styled-components";
+
 import conversationAPI from "../../../../api/conversations";
 import { SocketContext } from "../../../../context/SocketContext";
 import { useAppSelector } from "../../../../hooks";
-import Conversation from "./conversation/Conversation";
-
-const StNotifyContainer = styled.div`
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-`;
-
-const StNotify = styled.span``;
+import St from "./styles";
+import { Conversation } from "./";
 
 const ConversationList = () => {
   const [conversations, setConversations] = useState([]);
@@ -55,9 +46,9 @@ const ConversationList = () => {
           <Conversation key={index} conversation={conversation} />
         ))
       ) : (
-        <StNotifyContainer>
-          <StNotify>대화가 없습니다.</StNotify>
-        </StNotifyContainer>
+        <St.NotifyContainer>
+          <span>대화가 없습니다.</span>
+        </St.NotifyContainer>
       )}
     </>
   );
