@@ -42,12 +42,12 @@ const MessageBox = () => {
   // 해당 conversationId room 참가
   useEffect(() => {
     if (socket) {
-      socket.emit("join room", selectedUser);
+      socket.emit("join room", selectedUser.uid);
     }
 
     return () => {
       if (socket) {
-        socket.emit("leave room", selectedUser);
+        socket.emit("leave room", selectedUser.uid);
       }
     };
   }, [socket, selectedUser]);
@@ -67,7 +67,10 @@ const MessageBox = () => {
   }, [socket, selectedUser, messages]);
 
   // 해당 유저와의 채팅 내역 http 요청
-  useEffect(() => {
+  useLayoutEffect(() => {
+    // 스크롤을 내리기 위해 빈 값으로 상태갱신
+    // 안해주면 이전 메세지 값과 섞여서 유저 변경 시 스크롤이 이상한 곳으로 가있음
+    setMessages([]);
     reloadMessage(selectedUser.uid);
   }, [selectedUser]);
 
@@ -81,6 +84,7 @@ const MessageBox = () => {
 
   useLayoutEffect(() => {
     if (isScroll) {
+      console.log("scroll 해야댐");
       scrollToBottom(chatWindowRef);
       setIsScroll((prev) => !prev);
     }
@@ -90,17 +94,20 @@ const MessageBox = () => {
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
-        conversationAPI.getMoreMessage(messages[0]._id).then((res) => {
-          if (res.data.length) {
-            const prevMessages = removeDuplicateDate([
-              ...res.data,
-              ...messages,
-            ]);
-            setMessages(prevMessages);
-          } else {
-            observer.disconnect();
-          }
-        });
+        console.log("scroll paging");
+        conversationAPI
+          .getMoreMessage(selectedUser.uid, messages[0]._id)
+          .then((res) => {
+            if (res.data.length) {
+              const prevMessages = removeDuplicateDate([
+                ...res.data,
+                ...messages,
+              ]);
+              setMessages(prevMessages);
+            } else {
+              observer.disconnect();
+            }
+          });
       }
     });
     observerRef.current = observer;

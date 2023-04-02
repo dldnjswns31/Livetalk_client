@@ -12,8 +12,10 @@ const conversationAPI = {
   getConversation: (uid: string) => {
     return conversation("/conversations/user", { params: { uid } });
   },
-  getMoreMessage: (messageID: string) => {
-    return conversation("/conversations/message", { params: { messageID } });
+  getMoreMessage: (uid: string, messageID: string) => {
+    return conversation("/conversations/message", {
+      params: { messageID, uid },
+    });
   },
 };
 

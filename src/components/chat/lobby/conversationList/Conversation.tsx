@@ -2,6 +2,7 @@ import reactIcon from "../../../../assets/react.svg";
 import { useAppDispatch, useAppSelector } from "../../../../hooks";
 import { saveSelectedUser } from "../../../../redux/slice/selectedUserSlice";
 import { convertConversationDate } from "../../../../utils/convertDate";
+import getRandomProfileImage from "../../../../utils/getRandomProfileImage";
 import St from "./styles";
 
 interface IProps {
@@ -42,7 +43,7 @@ const Conversation = ({ conversation }: IProps) => {
   return (
     <St.ConversationContainer onClick={handleClick}>
       <St.UserImage>
-        <img src={reactIcon} alt="userImage" />
+        <img src={`${getRandomProfileImage()}`} alt="userImage" />
       </St.UserImage>
       <St.Conversation>
         <St.ConversationName>

@@ -1,6 +1,7 @@
 import reactIcon from "../../../../assets/react.svg";
 import { useAppDispatch, useAppSelector } from "../../../../hooks";
 import { saveSelectedUser } from "../../../../redux/slice/selectedUserSlice";
+import getRandomProfileImage from "../../../../utils/getRandomProfileImage";
 import St from "./styles";
 
 interface IUserData {
@@ -29,7 +30,7 @@ const User = ({ userData, connectingUsers }: IProps) => {
   return (
     <St.User onClick={handleUserClick}>
       <St.UserImage>
-        <img src={reactIcon} alt="userImage" />
+        <img src={getRandomProfileImage()} alt="userImage" />
       </St.UserImage>
       <St.UserName>
         <span>{userData.nickname}</span>
