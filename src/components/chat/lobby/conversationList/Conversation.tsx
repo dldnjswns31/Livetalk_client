@@ -7,15 +7,14 @@ import St from "./styles";
 
 interface IProps {
   conversation: {
-    createdAt: string;
+    _id: string;
     lastMessage: string;
+    unreadCount: number;
+    updatedAt: string;
     participantObj: {
       _id: string;
       nickname: string;
     }[];
-    updatedAt: string;
-    __v: string;
-    _id: string;
   };
 }
 
@@ -57,7 +56,14 @@ const Conversation = ({ conversation }: IProps) => {
           </span>
         </St.ConversationLastmessage>
       </St.Conversation>
-      <St.Time>{convertConversationDate(conversation.updatedAt)}</St.Time>
+      <St.TimeAndUnread>
+        <St.Time>{convertConversationDate(conversation.updatedAt)}</St.Time>
+        {conversation.unreadCount !== 0 && (
+          <St.Unread>
+            {conversation.unreadCount > 300 ? "300+" : conversation.unreadCount}
+          </St.Unread>
+        )}
+      </St.TimeAndUnread>
     </St.ConversationContainer>
   );
 };

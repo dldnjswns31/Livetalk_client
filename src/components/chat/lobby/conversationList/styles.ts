@@ -57,13 +57,30 @@ const ConversationLastmessage = styled.div`
   }
 `;
 
-const Time = styled.div`
+const TimeAndUnread = styled.div`
   flex: 2 0;
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
+  flex-direction: column;
+  justify-content: start;
+  align-items: flex-end;
+  padding: 1rem 0;
+`;
+
+const Time = styled.span`
+  margin-bottom: 0.25rem;
   color: ${({ theme }) => theme.colors.gray_4};
   font-size: 0.8rem;
+`;
+
+const Unread = styled.span`
+  display: inline-block;
+  height: 20px;
+  padding: 6px 8px;
+  background-color: ${({ theme }) => theme.colors.red};
+  border-radius: 8px;
+  color: ${({ theme }) => theme.colors.white};
+  font-size: 0.8rem;
+  font-weight: 700;
 `;
 
 const styles = {
@@ -72,8 +89,10 @@ const styles = {
   ConversationLastmessage,
   ConversationName,
   NotifyContainer,
-  Time,
+  TimeAndUnread,
   UserImage,
+  Time,
+  Unread,
 };
 
 export default styles;

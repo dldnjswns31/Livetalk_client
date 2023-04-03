@@ -53,9 +53,11 @@ const MessageBox = () => {
   }, [socket, selectedUser]);
 
   // 메세지 송/수신했을 때 채팅 내용 갱신
+  // 해당 유저와의 메세지 확인 socket event emit
   useEffect(() => {
     if (socket) {
       socket.on("private message", (message) => {
+        socket.emit("read message", selectedUser.uid);
         const newMessageArr = removeDuplicateDate([...messages, message]);
         setMessages(newMessageArr);
         setIsScroll(true);
@@ -84,7 +86,6 @@ const MessageBox = () => {
 
   useLayoutEffect(() => {
     if (isScroll) {
-      console.log("scroll 해야댐");
       scrollToBottom(chatWindowRef);
       setIsScroll((prev) => !prev);
     }
@@ -94,7 +95,6 @@ const MessageBox = () => {
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
-        console.log("scroll paging");
         conversationAPI
           .getMoreMessage(selectedUser.uid, messages[0]._id)
           .then((res) => {
