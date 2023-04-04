@@ -7,32 +7,52 @@ const removeDuplicateDate = (
     message: string;
     _id: string;
     createdAt: string;
-    isRead: string;
-    date: string;
+    isRead: boolean;
+    formattedDate: string;
+    formattedTime: string;
+    showedTime: string;
+    showedDate: string;
   }[]
 ) => {
   messages = messages.map((item) => {
     let { messageTime, messageDate } = convertMessageTime(item.createdAt);
-    item.createdAt = messageTime;
-    item.date = messageDate;
+
+    item.formattedTime = messageTime;
+    item.formattedDate = messageDate;
+
     return item;
   });
 
-  let prevDate = messages[0].date;
+  messages[0].showedDate = messages[0].formattedDate;
+  let prevDate = messages[0].formattedDate;
 
   for (let i = 1; i < messages.length; i++) {
     let prevMessage = messages[i - 1];
     let currentMessage = messages[i];
-    if (prevMessage.createdAt === currentMessage.createdAt)
-      prevMessage.createdAt = "";
 
-    if (prevDate === currentMessage.date) {
-      prevDate = currentMessage.date;
-      currentMessage.date = "";
+    // 메세지 시간 묶음
+    if (
+      prevMessage.formattedTime === currentMessage.formattedTime &&
+      prevMessage.from === currentMessage.from
+    ) {
+      prevMessage.showedTime = "";
     } else {
-      prevDate = currentMessage.date;
+      prevMessage.showedTime = prevMessage.formattedTime;
+    }
+
+    // 날짜 구분선
+    if (prevDate === currentMessage.formattedDate) {
+      prevDate = currentMessage.formattedDate;
+      currentMessage.showedDate = "";
+    } else {
+      prevDate = currentMessage.formattedDate;
+      currentMessage.showedDate = currentMessage.formattedDate;
     }
   }
+
+  messages[messages.length - 1].showedTime =
+    messages[messages.length - 1].formattedTime;
+
   return messages;
 };
 

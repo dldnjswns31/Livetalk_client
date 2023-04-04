@@ -1,19 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import styled from "styled-components";
+
 import conversationAPI from "../../../../api/conversations";
 import { SocketContext } from "../../../../context/SocketContext";
 import { useAppSelector } from "../../../../hooks";
-import Conversation from "./conversation/Conversation";
-
-const StNotifyContainer = styled.div`
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-`;
-
-const StNotify = styled.span``;
+import St from "./styles";
+import { Conversation } from "./";
 
 const ConversationList = () => {
   const [conversations, setConversations] = useState([]);
@@ -34,7 +25,7 @@ const ConversationList = () => {
   // 대화 도착 시 목록 리렌더링
   useEffect(() => {
     if (socket) {
-      socket.on("private message", () => {
+      socket.on("reload conversation", () => {
         conversationAPI.getAllConverstaions().then((res) => {
           let conversationArr = res.data;
           if (conversationArr.length) {
@@ -43,7 +34,7 @@ const ConversationList = () => {
         });
       });
       return () => {
-        socket.removeListener("private message");
+        socket.removeListener("reload conversation");
       };
     }
   }, [socket, selectedUser]);
@@ -55,9 +46,9 @@ const ConversationList = () => {
           <Conversation key={index} conversation={conversation} />
         ))
       ) : (
-        <StNotifyContainer>
-          <StNotify>대화가 없습니다.</StNotify>
-        </StNotifyContainer>
+        <St.NotifyContainer>
+          <span>대화가 없습니다.</span>
+        </St.NotifyContainer>
       )}
     </>
   );
