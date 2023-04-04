@@ -7,7 +7,7 @@ const removeDuplicateDate = (
     message: string;
     _id: string;
     createdAt: string;
-    isRead: string;
+    isRead: boolean;
     formattedDate: string;
     formattedTime: string;
     showedTime: string;

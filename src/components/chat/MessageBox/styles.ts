@@ -94,14 +94,23 @@ const Message = styled.span<{ myself: boolean }>`
   word-break: break-all;
 `;
 
-const MessageTimeContainer = styled.div`
+const MessageTimeUnreadContainer = styled.div<{ myself: boolean }>`
   display: inline-flex;
-  align-items: flex-end;
+  flex-direction: column;
+  /* align-items: flex-end; */
+  align-items: ${({ myself }) => (myself ? "flex-end" : "flex-start")};
   height: 100%;
   margin: 0 0.5rem 0 0.5rem;
 `;
 
+const Unread = styled.span`
+  color: ${({ theme }) => theme.colors.yellow};
+  font-size: 0.6rem;
+  font-weight: 700;
+`;
+
 const MessageTime = styled.span`
+  margin-top: 0.25rem;
   color: ${({ theme }) => theme.colors.gray_4};
   font-size: 0.6rem;
 `;
@@ -115,8 +124,9 @@ const styles = {
   DateDivideContainer,
   Message,
   MessageContainer,
+  MessageTimeUnreadContainer,
   MessageTime,
-  MessageTimeContainer,
+  Unread,
 };
 
 export default styles;

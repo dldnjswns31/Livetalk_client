@@ -14,21 +14,21 @@ import removeDuplicateDate from "../../../utils/removeDuplicateDate";
 import { Message } from "./";
 import St from "./styles";
 
+interface IMessage {
+  from: string;
+  to: string;
+  message: string;
+  _id: string;
+  createdAt: string;
+  isRead: boolean;
+  formattedDate: string;
+  formattedTime: string;
+  showedTime: string;
+  showedDate: string;
+}
+
 const MessageBox = () => {
-  const [messages, setMessages] = useState<
-    {
-      from: string;
-      to: string;
-      message: string;
-      _id: string;
-      createdAt: string;
-      isRead: string;
-      formattedDate: string;
-      formattedTime: string;
-      showedTime: string;
-      showedDate: string;
-    }[]
-  >([]);
+  const [messages, setMessages] = useState<IMessage[]>([]);
   const [isScroll, setIsScroll] = useState(false);
   const chatWindowRef = useRef<HTMLDivElement>(null);
   const observerRef = useRef<IntersectionObserver | null>(null);
@@ -40,14 +40,24 @@ const MessageBox = () => {
   const selectedUser = useAppSelector((state) => state.selectedUser);
 
   // 해당 conversationId room 참가
+  // 상대방이 메세지를 읽을 경우 모든 메세지의 안읽음 표시 삭제
   useEffect(() => {
     if (socket) {
       socket.emit("join room", selectedUser.uid);
+      socket.on("read message", () => {
+        setMessages((prev) =>
+          prev.map((message) => {
+            message.isRead = true;
+            return message;
+          })
+        );
+      });
     }
 
     return () => {
       if (socket) {
         socket.emit("leave room", selectedUser.uid);
+        socket.removeListener("read message");
       }
     };
   }, [socket, selectedUser]);
@@ -59,6 +69,7 @@ const MessageBox = () => {
       socket.on("private message", (message) => {
         socket.emit("read message", selectedUser.uid);
         const newMessageArr = removeDuplicateDate([...messages, message]);
+
         setMessages(newMessageArr);
         setIsScroll(true);
       });
@@ -69,12 +80,16 @@ const MessageBox = () => {
   }, [socket, selectedUser, messages]);
 
   // 해당 유저와의 채팅 내역 http 요청
+  // 해당 유저와의 채팅 읽음 표시
   useLayoutEffect(() => {
     // 스크롤을 내리기 위해 빈 값으로 상태갱신
     // 안해주면 이전 메세지 값과 섞여서 유저 변경 시 스크롤이 이상한 곳으로 가있음
+    if (socket) {
+      socket.emit("read message", selectedUser.uid);
+    }
     setMessages([]);
-    reloadMessage(selectedUser.uid);
-  }, [selectedUser]);
+    loadMessage(selectedUser.uid);
+  }, [selectedUser, socket]);
 
   // 메세지 수신 시 스크롤 아래로 이동
   useLayoutEffect(() => {
@@ -114,7 +129,6 @@ const MessageBox = () => {
     if (firstMessageRef.current) {
       observer.observe(firstMessageRef.current);
     }
-
     return () => {
       observer.disconnect();
     };
@@ -124,7 +138,7 @@ const MessageBox = () => {
     if (ref.current) ref.current.scrollIntoView();
   }
 
-  function reloadMessage(uid: string) {
+  function loadMessage(uid: string) {
     conversationAPI.getConversation(uid).then((res) => {
       if (res.data.length) {
         const messages = removeDuplicateDate(res.data);

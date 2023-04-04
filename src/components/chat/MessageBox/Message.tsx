@@ -8,7 +8,7 @@ interface IProps {
     message: string;
     _id: string;
     createdAt: string;
-    isRead: string;
+    isRead: boolean;
     formattedDate: string;
     formattedTime: string;
     showedTime: string;
@@ -29,9 +29,12 @@ const Message = ({ message, firstMessageRef }: IProps) => {
       <St.MessageContainer myself={message.from === loginUserData.uid}>
         {message.from === loginUserData.uid ? (
           <>
-            <St.MessageTimeContainer>
+            <St.MessageTimeUnreadContainer
+              myself={message.from === loginUserData.uid}
+            >
+              {message.isRead ? null : <St.Unread>1</St.Unread>}
               <St.MessageTime>{message.showedTime}</St.MessageTime>
-            </St.MessageTimeContainer>
+            </St.MessageTimeUnreadContainer>
             <St.Message myself={message.from === loginUserData.uid}>
               {message.message}
             </St.Message>
@@ -41,9 +44,12 @@ const Message = ({ message, firstMessageRef }: IProps) => {
             <St.Message myself={message.from === loginUserData.uid}>
               {message.message}
             </St.Message>
-            <St.MessageTimeContainer>
+            <St.MessageTimeUnreadContainer
+              myself={message.from === loginUserData.uid}
+            >
+              {message.isRead ? null : <St.Unread>1</St.Unread>}
               <St.MessageTime>{message.showedTime}</St.MessageTime>
-            </St.MessageTimeContainer>
+            </St.MessageTimeUnreadContainer>
           </>
         )}
       </St.MessageContainer>

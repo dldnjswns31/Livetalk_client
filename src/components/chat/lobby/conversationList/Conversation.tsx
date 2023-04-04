@@ -58,7 +58,7 @@ const Conversation = ({ conversation }: IProps) => {
       </St.Conversation>
       <St.TimeAndUnread>
         <St.Time>{convertConversationDate(conversation.updatedAt)}</St.Time>
-        {conversation.unreadCount !== 0 && (
+        {conversation.unreadCount && (
           <St.Unread>
             {conversation.unreadCount > 300 ? "300+" : conversation.unreadCount}
           </St.Unread>
