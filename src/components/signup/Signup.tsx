@@ -28,7 +28,7 @@ const Signup = () => {
     <>
       <St.SignupContainer>
         <St.LogoContainer>
-          <h1>LIVE CHAT</h1>
+          <h1>LIVE TALK</h1>
         </St.LogoContainer>
         <St.FormContainer>
           <form onSubmit={handleSubmit(onSubmit)}>
