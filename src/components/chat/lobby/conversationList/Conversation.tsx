@@ -9,8 +9,8 @@ interface IProps {
   conversation: {
     _id: string;
     lastMessage: string;
-    unreadCount: number;
     updatedAt: string;
+    unreadCount?: number;
     participantObj: {
       _id: string;
       nickname: string;
@@ -58,11 +58,11 @@ const Conversation = ({ conversation }: IProps) => {
       </St.Conversation>
       <St.TimeAndUnread>
         <St.Time>{convertConversationDate(conversation.updatedAt)}</St.Time>
-        {conversation.unreadCount && (
+        {conversation.unreadCount ? (
           <St.Unread>
             {conversation.unreadCount > 300 ? "300+" : conversation.unreadCount}
           </St.Unread>
-        )}
+        ) : null}
       </St.TimeAndUnread>
     </St.ConversationContainer>
   );

@@ -40,7 +40,7 @@ const MessageBox = () => {
   const selectedUser = useAppSelector((state) => state.selectedUser);
 
   // 해당 conversationId room 참가
-  // 상대방이 메세지를 읽을 경우 모든 메세지의 안읽음 표시 삭제
+  // 상대방이 메세지를 읽을 경우 (채팅방에 참가했을 때) 클라이언트가 보낸 모든 메세지의 안읽음 표시 삭제
   useEffect(() => {
     if (socket) {
       socket.emit("join room", selectedUser.uid);
@@ -63,11 +63,9 @@ const MessageBox = () => {
   }, [socket, selectedUser]);
 
   // 메세지 송/수신했을 때 채팅 내용 갱신
-  // 해당 유저와의 메세지 확인 socket event emit
   useEffect(() => {
     if (socket) {
       socket.on("private message", (message) => {
-        socket.emit("read message", selectedUser.uid);
         const newMessageArr = removeDuplicateDate([...messages, message]);
 
         setMessages(newMessageArr);
@@ -84,11 +82,11 @@ const MessageBox = () => {
   useLayoutEffect(() => {
     // 스크롤을 내리기 위해 빈 값으로 상태갱신
     // 안해주면 이전 메세지 값과 섞여서 유저 변경 시 스크롤이 이상한 곳으로 가있음
+    setMessages([]);
+    loadMessage(selectedUser.uid);
     if (socket) {
       socket.emit("read message", selectedUser.uid);
     }
-    setMessages([]);
-    loadMessage(selectedUser.uid);
   }, [selectedUser, socket]);
 
   // 메세지 수신 시 스크롤 아래로 이동
