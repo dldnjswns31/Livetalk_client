@@ -70,6 +70,11 @@ const GoToLogin = styled.span`
   color: ${({ theme }) => theme.colors.blue};
 `;
 
+const Error = styled.span`
+  color: ${({ theme }) => theme.colors.red};
+  font-size: 0.7rem;
+`;
+
 const style = {
   ButtonContainer,
   FormContainer,
@@ -78,6 +83,7 @@ const style = {
   LogoContainer,
   SignupContainer,
   SubmitButton,
+  Error,
 };
 
 export default style;

@@ -1,3 +1,5 @@
+import { AxiosError } from "axios";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +10,7 @@ import withAuth from "../HOC/withAuth";
 import St from "./styles";
 
 const Signup = () => {
+  const [error, setError] = useState<undefined | string>();
   const {
     register,
     handleSubmit,
@@ -20,7 +23,8 @@ const Signup = () => {
       await authAPI.signup(data);
       navigate("/login");
     } catch (err) {
-      console.log(err);
+      const error = err as AxiosError<string>;
+      setError(error.response?.data);
     }
   };
 
@@ -82,6 +86,7 @@ const Signup = () => {
               <St.SubmitButton disabled={!isDirty || !isValid}>
                 회원가입
               </St.SubmitButton>
+              <St.Error>{error}</St.Error>
             </St.ButtonContainer>
           </form>
         </St.FormContainer>
