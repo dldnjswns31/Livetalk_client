@@ -33,30 +33,37 @@ const ChattingForm = styled.form`
   align-items: center;
   width: 100%;
   height: 100%;
-  padding: 0 2rem;
   background-color: ${({ theme }) => theme.colors.white};
 
-  input {
-    flex: 10 0;
-    height: 60%;
-    margin-right: 1rem;
+  textarea {
+    flex: 8 0;
+    height: 100%;
+    padding: 0.5rem;
+    border: none;
+    outline: none;
+    font-family: "Arial", sans-serif;
+    resize: none;
   }
 
   div {
-    display: flex;
+    display: inline-flex;
+    width: 100%;
+    height: 100%;
     justify-content: center;
     align-items: center;
-    flex: 1 0;
-    height: 60%;
-    margin-left: 1rem;
-
-    button {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      border: none;
-    }
+    flex: 2 0;
   }
+`;
+
+const SubmitButton = styled.button<{ isActive: boolean }>`
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: ${({ isActive, theme }) =>
+    isActive ? theme.colors.yellow : theme.colors.gray_2};
+  color: ${({ isActive, theme }) =>
+    isActive ? theme.colors.black : theme.colors.gray_1};
 `;
 
 // Message
@@ -92,12 +99,12 @@ const Message = styled.span<{ myself: boolean }>`
   background-color: ${({ theme, myself }) =>
     myself ? theme.colors.yellow : theme.colors.white};
   word-break: break-all;
+  white-space: pre-line;
 `;
 
 const MessageTimeUnreadContainer = styled.div<{ myself: boolean }>`
   display: inline-flex;
   flex-direction: column;
-  /* align-items: flex-end; */
   align-items: ${({ myself }) => (myself ? "flex-end" : "flex-start")};
   height: 100%;
   margin: 0 0.5rem 0 0.5rem;
@@ -126,6 +133,7 @@ const styles = {
   MessageContainer,
   MessageTimeUnreadContainer,
   MessageTime,
+  SubmitButton,
   Unread,
 };
 

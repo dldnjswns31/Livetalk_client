@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { useAppSelector } from "../../../hooks";
 import St from "./styles";
 
@@ -57,4 +58,4 @@ const Message = ({ message, firstMessageRef }: IProps) => {
   );
 };
 
-export default Message;
+export default memo(Message);

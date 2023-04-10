@@ -35,7 +35,9 @@ const MessageBox = () => {
   const firstMessageRef = useRef<HTMLDivElement | null>(null);
   const messageLengthRef = useRef(0);
 
-  const { register, handleSubmit, reset } = useForm<{ message: string }>();
+  const { register, handleSubmit, reset, watch } = useForm<{
+    message: string;
+  }>();
   const socket = useContext(SocketContext);
   const selectedUser = useAppSelector((state) => state.selectedUser);
 
@@ -153,6 +155,17 @@ const MessageBox = () => {
     reset();
   }
 
+  function handleKeyPress(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSubmit(onSubmit)();
+    } else if (e.key === "Enter" && e.shiftKey) {
+      e.preventDefault();
+      const textarea = e.target as HTMLTextAreaElement;
+      textarea.value += "\n";
+    }
+  }
+
   return (
     <>
       <St.ChattingTitle>
@@ -171,9 +184,15 @@ const MessageBox = () => {
       </St.ChattingContent>
       <St.ChattingFormContainer>
         <St.ChattingForm onSubmit={handleSubmit(onSubmit)}>
-          <input type="text" {...register("message", { required: true })} />
+          <textarea
+            autoFocus={true}
+            onKeyPress={handleKeyPress}
+            {...register("message", { required: true })}
+          />
           <div>
-            <button>send</button>
+            <St.SubmitButton type="submit" isActive={!!watch("message")}>
+              전송
+            </St.SubmitButton>
           </div>
         </St.ChattingForm>
       </St.ChattingFormContainer>
