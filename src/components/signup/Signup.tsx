@@ -1,8 +1,7 @@
 import { AxiosError } from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import authAPI from "../../api/auth";
 import { ISignupForm } from "../../types/signup";
@@ -11,11 +10,12 @@ import St from "./styles";
 
 const Signup = () => {
   const [error, setError] = useState<undefined | string>();
+
   const {
     register,
     handleSubmit,
     formState: { errors, isDirty, isValid },
-  } = useForm<ISignupForm>();
+  } = useForm<ISignupForm>({ mode: "onChange" });
   const navigate = useNavigate();
 
   const onSubmit = async (data: ISignupForm) => {
@@ -48,7 +48,7 @@ const Signup = () => {
                   },
                 })}
               />
-              <span>{errors?.email?.message}</span>
+              {errors.email && <St.Error>{errors?.email?.message}</St.Error>}
             </St.InputContaienr>
             <St.InputContaienr>
               <input
@@ -66,7 +66,9 @@ const Signup = () => {
                   },
                 })}
               />
-              <span>{errors?.nickname?.message}</span>
+              {errors.nickname && (
+                <St.Error>{errors?.nickname?.message}</St.Error>
+              )}
             </St.InputContaienr>
             <St.InputContaienr>
               <input
@@ -80,13 +82,15 @@ const Signup = () => {
                   },
                 })}
               />
-              <span>{errors?.password?.message}</span>
+              {errors.password && (
+                <St.Error>{errors?.password?.message}</St.Error>
+              )}
             </St.InputContaienr>
             <St.ButtonContainer>
               <St.SubmitButton disabled={!isDirty || !isValid}>
                 회원가입
               </St.SubmitButton>
-              <St.Error>{error}</St.Error>
+              {error && <St.Error>{error}</St.Error>}
             </St.ButtonContainer>
           </form>
         </St.FormContainer>

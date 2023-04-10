@@ -20,7 +20,6 @@ const Login = () => {
     handleSubmit,
     formState: { errors, isDirty, isValid },
   } = useForm<ISigninForm>({ mode: "onChange" });
-
   const onSubmit = async (form: ISigninForm) => {
     try {
       const res = await authAPI.signin(form);
@@ -46,23 +45,36 @@ const Login = () => {
                 type="text"
                 placeholder="이메일"
                 {...register("email", {
-                  required: true,
-                  pattern: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/,
+                  required: "이메일을 입력해 주세요.",
+                  pattern: {
+                    value: /[a-z0-9]+@[a-z]+\.[a-z]{2,3}/,
+                    message: "올바른 이메일 형식을 입력해주세요.",
+                  },
                 })}
               />
+              {errors.email && <St.Error>{errors.email.message}</St.Error>}
             </St.InputContaienr>
             <St.InputContaienr>
               <input
                 type="password"
                 placeholder="비밀번호"
-                {...register("password", { required: true, minLength: 8 })}
+                {...register("password", {
+                  required: "비밀번호를 입력해주세요.",
+                  minLength: {
+                    value: 8,
+                    message: "비밀번호는 최소 8자입니다.",
+                  },
+                })}
               />
+              {errors.password && (
+                <St.Error>{errors.password.message}</St.Error>
+              )}
             </St.InputContaienr>
             <St.ButtonContainer>
               <St.SubmitButton disabled={!isDirty || !isValid}>
                 로그인
               </St.SubmitButton>
-              <St.Error>{error}</St.Error>
+              {error && <St.Error>{error}</St.Error>}
             </St.ButtonContainer>
           </form>
         </St.FormContainer>
