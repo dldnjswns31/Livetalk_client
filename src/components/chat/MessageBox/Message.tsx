@@ -58,4 +58,4 @@ const Message = ({ message, firstMessageRef }: IProps) => {
   );
 };
 
-export default memo(Message);
+export default Message;

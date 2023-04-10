@@ -11,7 +11,7 @@ import conversationAPI from "../../../api/conversations";
 import { SocketContext } from "../../../context/SocketContext";
 import { useAppSelector } from "../../../hooks";
 import removeDuplicateDate from "../../../utils/removeDuplicateDate";
-import { Message } from "./";
+import { Message } from ".";
 import St from "./styles";
 
 interface IMessage {

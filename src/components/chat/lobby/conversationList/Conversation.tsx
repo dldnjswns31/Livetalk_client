@@ -1,4 +1,3 @@
-import reactIcon from "../../../../assets/react.svg";
 import { useAppDispatch, useAppSelector } from "../../../../hooks";
 import { saveSelectedUser } from "../../../../redux/slice/selectedUserSlice";
 import { convertConversationDate } from "../../../../utils/convertDate";
