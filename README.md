@@ -9,6 +9,9 @@
 
 해당 프로젝트는 Vercel을 통해 배포했습니다.
 
+회원가입을 생략하고 싶은 경우 테스트용 아이디를 사용하시면 됩니다.
+> ID: test01@gmail.com  Password: testtest
+
 [배포 링크](https://livetalk-client.vercel.app/)
 
 ## 사용 기술
